@@ -29,7 +29,7 @@ const founder = {
   name: 'Dipesh Sahu',
   role: 'Founder, Shahu Catering & Event Management',
   quote: 'Good food brings people together.',
-  image: '/founder.jpg',
+  image: '/founder.png',
   story: [
     'Behind every memorable banquet is a genuine passion for hospitality. For Dipesh Sahu, catering is more than coordinating courses—it is the art of honoring traditions, delighting guests, and creating shared celebrations where everyone feels welcomed and nourished.',
     'Guided by uncompromising standards for pure vegetarian cooking, every recipe, live counter, and spice blend is thoughtfully curated. The team operates with one simple principle: treat every wedding, reception, and milestone celebration with the same devotion and personal care as a family gathering.',
@@ -176,8 +176,8 @@ function Nav({ active }) {
     <>
       <header
         className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${solid
-            ? 'bg-white/95 py-2.5 sm:py-3 shadow-[0_1px_0_rgba(184,137,58,0.25)] backdrop-blur-md'
-            : 'bg-white/80 py-3 sm:py-4 backdrop-blur-sm'
+          ? 'bg-white/95 py-2.5 sm:py-3 shadow-[0_1px_0_rgba(184,137,58,0.25)] backdrop-blur-md'
+          : 'bg-white/80 py-3 sm:py-4 backdrop-blur-sm'
           }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 md:px-8">
@@ -773,8 +773,8 @@ function MenuSection() {
                 key={pkg.id}
                 onClick={() => setActiveIdx(idx)}
                 className={`relative shrink-0 rounded-full px-5 sm:px-7 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold transition-all duration-300 min-h-[44px] flex items-center justify-center ${isSelected
-                    ? 'bg-maroon text-white shadow-md'
-                    : 'border border-gold/40 bg-white text-maroon hover:border-gold hover:bg-cream active:scale-95'
+                  ? 'bg-maroon text-white shadow-md'
+                  : 'border border-gold/40 bg-white text-maroon hover:border-gold hover:bg-cream active:scale-95'
                   }`}
               >
                 <span className="tracking-wide">
@@ -1218,10 +1218,10 @@ export default function App() {
         }),
       { rootMargin: '-35% 0px -45% 0px' }
     )
-    ;['home', 'about', 'founder', 'menu', 'gallery', 'contact'].forEach((id) => {
-      const el = document.getElementById(id)
-      if (el) o.observe(el)
-    })
+      ;['home', 'about', 'founder', 'menu', 'gallery', 'contact'].forEach((id) => {
+        const el = document.getElementById(id)
+        if (el) o.observe(el)
+      })
     return () => o.disconnect()
   }, [])
 
