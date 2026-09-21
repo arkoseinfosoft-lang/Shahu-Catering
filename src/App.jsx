@@ -584,167 +584,6 @@ function About() {
   )
 }
 
-function Founder() {
-  const [imgBad, setImgBad] = useState(false)
-  const portraitRef = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: portraitRef,
-    offset: ['start end', 'end start'],
-  })
-
-  // Turn off parallax on screens narrower than 768px
-  const [isDesktop, setIsDesktop] = useState(false)
-  useEffect(() => {
-    const check = () => setIsDesktop(window.innerWidth >= 768)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
-
-  const yParallax = useSpring(useTransform(scrollYProgress, [0, 1], [-20, 20]), {
-    stiffness: 90,
-    damping: 30,
-  })
-
-  return (
-    <section id="founder" className="relative bg-white py-16 sm:py-24 md:py-32 overflow-hidden border-t border-gold/15">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
-          {/* Portrait Column: Mobile first (order-1), Desktop (lg:col-span-5 lg:order-1) */}
-          <div ref={portraitRef} className="order-1 lg:col-span-5">
-            <Reveal y={25} delay={0.1}>
-              <div className="relative mx-auto max-w-sm sm:max-w-md lg:max-w-none">
-                {/* Thin gold offset frame for editorial desktop feel */}
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -inset-2.5 sm:-inset-4 hidden rounded-2xl border border-gold/40 sm:block -z-10 translate-x-2.5 translate-y-2.5 sm:translate-x-3.5 sm:translate-y-3.5"
-                />
-
-                {/* Portrait Card */}
-                <motion.div
-                  style={{ y: isDesktop ? yParallax : 0 }}
-                  className="group relative overflow-hidden rounded-xl sm:rounded-2xl border border-gold/30 bg-cream shadow-xl aspect-[4/5] sm:aspect-[3/4]"
-                >
-                  {imgBad ? (
-                    <div
-                      role="img"
-                      aria-label={founder.name}
-                      className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-cream via-[#f7f1e6] to-[#ebdcbe] p-6 text-center"
-                    >
-                      <span className="font-display text-2xl font-semibold text-maroon">{founder.name}</span>
-                      <span className="mt-1 text-xs uppercase tracking-wider text-gold">{founder.role}</span>
-                    </div>
-                  ) : (
-                    <img
-                      src={founder.image}
-                      alt={`${founder.name} - ${founder.role}`}
-                      loading="lazy"
-                      onError={() => setImgBad(true)}
-                      className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
-                    />
-                  )}
-
-                  {/* Gentle gradient scrim at base of photo for contrast */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-maroon/85 via-maroon/15 to-transparent opacity-60 sm:opacity-40 transition-opacity duration-300 group-hover:opacity-50" />
-
-                  {/* Refined name badge over photo */}
-                  <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 flex items-center justify-between rounded-xl border border-gold/25 bg-white/95 px-3.5 py-2.5 shadow-md backdrop-blur-md">
-                    <div>
-                      <p className="font-display text-sm sm:text-base font-semibold leading-tight text-maroon">
-                        {founder.name}
-                      </p>
-                      <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wider text-gold">
-                        Founder & Culinary Direction
-                      </p>
-                    </div>
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold/30 bg-cream text-maroon">
-                      <ChefHat className="h-4 w-4 text-gold" />
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-            </Reveal>
-          </div>
-
-          {/* Text Content Column: Mobile (order-2), Desktop (lg:col-span-7 lg:order-2) */}
-          <div className="order-2 lg:col-span-7">
-            <Title subtitle="Founder Story">
-              A personal commitment to every celebration.
-            </Title>
-
-            {/* Large Pull Quote */}
-            <Reveal delay={0.1} className="mt-5 sm:mt-6">
-              <div className="border-l-2 border-gold pl-4 sm:pl-6 py-1">
-                <p className="font-display text-2xl sm:text-3xl md:text-4xl italic font-medium leading-snug text-maroon">
-                  “{founder.quote}”
-                </p>
-              </div>
-            </Reveal>
-
-            {/* Story Paragraphs */}
-            <div className="mt-6 sm:mt-8 space-y-4 text-sm sm:text-base leading-relaxed text-neutral-600">
-              {founder.story.map((para, idx) => (
-                <Reveal key={idx} delay={0.12 + idx * 0.05}>
-                  <p>{para}</p>
-                </Reveal>
-              ))}
-              {/* TODO: add real detail: founding year, regional culinary roots, or signature milestones */}
-            </div>
-
-            {/* Guiding Principles / What He Stands For */}
-            <Reveal delay={0.25} className="mt-8 sm:mt-10">
-              <p className="mb-3.5 text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-                Guiding Principles
-              </p>
-              <div className="grid gap-3.5 sm:gap-4 sm:grid-cols-3">
-                {founder.pillars.map((pillar, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-xl border border-gold/25 bg-cream/40 p-4 transition duration-300 hover:border-gold/50 hover:bg-cream"
-                  >
-                    {/* TODO: add real detail for pillar #{idx + 1} */}
-                    <div className="mb-1.5 flex items-center gap-2">
-                      <Sparkles className="h-3.5 w-3.5 shrink-0 text-gold" />
-                      <h4 className="font-display text-base sm:text-lg font-semibold text-maroon">
-                        {pillar.title}
-                      </h4>
-                    </div>
-                    <p className="text-xs leading-relaxed text-neutral-600">
-                      {pillar.desc}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-
-            {/* Signature-style Name & CTA Button */}
-            <Reveal delay={0.3} className="mt-8 sm:mt-10 flex flex-col gap-4 border-t border-gold/20 pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="font-display text-2xl sm:text-3xl font-semibold tracking-wide text-maroon italic">
-                  {founder.name}
-                </p>
-                <p className="mt-0.5 text-xs uppercase tracking-widest text-neutral-500">
-                  {founder.role}
-                </p>
-              </div>
-
-              <a
-                href={wa(founder.waMessage)}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-full bg-maroon px-7 py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-wine active:scale-95 self-start sm:self-auto"
-              >
-                <MessageCircle className="h-4 w-4 text-gold" />
-                <span>Talk to Dipesh</span>
-              </a>
-            </Reveal>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 function MenuSection() {
   const [activeIdx, setActiveIdx] = useState(0)
   const currentPkg = packages[activeIdx]
@@ -928,6 +767,167 @@ function Gallery() {
               </div>
             </Reveal>
           ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Founder() {
+  const [imgBad, setImgBad] = useState(false)
+  const portraitRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: portraitRef,
+    offset: ['start end', 'end start'],
+  })
+
+  // Turn off parallax on screens narrower than 768px
+  const [isDesktop, setIsDesktop] = useState(false)
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  const yParallax = useSpring(useTransform(scrollYProgress, [0, 1], [-20, 20]), {
+    stiffness: 90,
+    damping: 30,
+  })
+
+  return (
+    <section id="founder" className="relative bg-white py-16 sm:py-24 md:py-32 overflow-hidden border-t border-gold/15">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+          {/* Portrait Column: Mobile first (order-1), Desktop (lg:col-span-5 lg:order-1) */}
+          <div ref={portraitRef} className="order-1 lg:col-span-5">
+            <Reveal y={25} delay={0.1}>
+              <div className="relative mx-auto max-w-sm sm:max-w-md lg:max-w-none">
+                {/* Thin gold offset frame for editorial desktop feel */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -inset-2.5 sm:-inset-4 hidden rounded-2xl border border-gold/40 sm:block -z-10 translate-x-2.5 translate-y-2.5 sm:translate-x-3.5 sm:translate-y-3.5"
+                />
+
+                {/* Portrait Card */}
+                <motion.div
+                  style={{ y: isDesktop ? yParallax : 0 }}
+                  className="group relative overflow-hidden rounded-xl sm:rounded-2xl border border-gold/30 bg-cream shadow-xl aspect-[4/5] sm:aspect-[3/4]"
+                >
+                  {imgBad ? (
+                    <div
+                      role="img"
+                      aria-label={founder.name}
+                      className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-cream via-[#f7f1e6] to-[#ebdcbe] p-6 text-center"
+                    >
+                      <span className="font-display text-2xl font-semibold text-maroon">{founder.name}</span>
+                      <span className="mt-1 text-xs uppercase tracking-wider text-gold">{founder.role}</span>
+                    </div>
+                  ) : (
+                    <img
+                      src={founder.image}
+                      alt={`${founder.name} - ${founder.role}`}
+                      loading="lazy"
+                      onError={() => setImgBad(true)}
+                      className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                  )}
+
+                  {/* Gentle gradient scrim at base of photo for contrast */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-maroon/85 via-maroon/15 to-transparent opacity-60 sm:opacity-40 transition-opacity duration-300 group-hover:opacity-50" />
+
+                  {/* Refined name badge over photo */}
+                  <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 flex items-center justify-between rounded-xl border border-gold/25 bg-white/95 px-3.5 py-2.5 shadow-md backdrop-blur-md">
+                    <div>
+                      <p className="font-display text-sm sm:text-base font-semibold leading-tight text-maroon">
+                        {founder.name}
+                      </p>
+                      <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wider text-gold">
+                        Founder & Culinary Direction
+                      </p>
+                    </div>
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold/30 bg-cream text-maroon">
+                      <ChefHat className="h-4 w-4 text-gold" />
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </Reveal>
+          </div>
+
+          {/* Text Content Column: Mobile (order-2), Desktop (lg:col-span-7 lg:order-2) */}
+          <div className="order-2 lg:col-span-7">
+            <Title subtitle="Founder Story">
+              A personal commitment to every celebration.
+            </Title>
+
+            {/* Large Pull Quote */}
+            <Reveal delay={0.1} className="mt-5 sm:mt-6">
+              <div className="border-l-2 border-gold pl-4 sm:pl-6 py-1">
+                <p className="font-display text-2xl sm:text-3xl md:text-4xl italic font-medium leading-snug text-maroon">
+                  “{founder.quote}”
+                </p>
+              </div>
+            </Reveal>
+
+            {/* Story Paragraphs */}
+            <div className="mt-6 sm:mt-8 space-y-4 text-sm sm:text-base leading-relaxed text-neutral-600">
+              {founder.story.map((para, idx) => (
+                <Reveal key={idx} delay={0.12 + idx * 0.05}>
+                  <p>{para}</p>
+                </Reveal>
+              ))}
+              {/* TODO: add real detail: founding year, regional culinary roots, or signature milestones */}
+            </div>
+
+            {/* Guiding Principles / What He Stands For */}
+            <Reveal delay={0.25} className="mt-8 sm:mt-10">
+              <p className="mb-3.5 text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                Guiding Principles
+              </p>
+              <div className="grid gap-3.5 sm:gap-4 sm:grid-cols-3">
+                {founder.pillars.map((pillar, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-xl border border-gold/25 bg-cream/40 p-4 transition duration-300 hover:border-gold/50 hover:bg-cream"
+                  >
+                    {/* TODO: add real detail for pillar #{idx + 1} */}
+                    <div className="mb-1.5 flex items-center gap-2">
+                      <Sparkles className="h-3.5 w-3.5 shrink-0 text-gold" />
+                      <h4 className="font-display text-base sm:text-lg font-semibold text-maroon">
+                        {pillar.title}
+                      </h4>
+                    </div>
+                    <p className="text-xs leading-relaxed text-neutral-600">
+                      {pillar.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+
+            {/* Signature-style Name & CTA Button */}
+            <Reveal delay={0.3} className="mt-8 sm:mt-10 flex flex-col gap-4 border-t border-gold/20 pt-6 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-display text-2xl sm:text-3xl font-semibold tracking-wide text-maroon italic">
+                  {founder.name}
+                </p>
+                <p className="mt-0.5 text-xs uppercase tracking-widest text-neutral-500">
+                  {founder.role}
+                </p>
+              </div>
+
+              <a
+                href={wa(founder.waMessage)}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-full bg-maroon px-7 py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-wine active:scale-95 self-start sm:self-auto"
+              >
+                <MessageCircle className="h-4 w-4 text-gold" />
+                <span>Talk to Dipesh</span>
+              </a>
+            </Reveal>
+          </div>
         </div>
       </div>
     </section>
@@ -1208,9 +1208,9 @@ export default function App() {
       (es) =>
         es.forEach((e) => {
           if (e.isIntersecting) {
-            // Keep "About" link highlighted when founder section is in view
+            // Keep "Gallery" link highlighted when founder section is in view
             if (e.target.id === 'founder') {
-              setActive('about')
+              setActive('gallery')
             } else {
               setActive(e.target.id)
             }
@@ -1218,10 +1218,10 @@ export default function App() {
         }),
       { rootMargin: '-35% 0px -45% 0px' }
     )
-      ;['home', 'about', 'founder', 'menu', 'gallery', 'contact'].forEach((id) => {
-        const el = document.getElementById(id)
-        if (el) o.observe(el)
-      })
+    ;['home', 'about', 'menu', 'gallery', 'founder', 'contact'].forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) o.observe(el)
+    })
     return () => o.disconnect()
   }, [])
 
@@ -1239,9 +1239,9 @@ export default function App() {
         <Hero />
         <Marquee />
         <About />
-        <Founder />
         <MenuSection />
         <Gallery />
+        <Founder />
         <Contact />
       </main>
 
