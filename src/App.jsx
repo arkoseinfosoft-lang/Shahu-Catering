@@ -17,7 +17,8 @@ import {
 import { packages } from './data'
 
 const PHONE = '9975110727'
-const wa = (text) => `https://wa.me/919975110727?text=${encodeURIComponent(text)}`
+const FORM_PHONE = '9795255947'
+const wa = (text, phone = PHONE) => `https://wa.me/91${phone}?text=${encodeURIComponent(text)}`
 const WA_DEFAULT = wa(
   "Hello Shahu Catering! I found your website and I'd like to know more about your catering packages. Could you please share the menu and pricing?"
 )
@@ -767,7 +768,7 @@ function Contact() {
 • Package: ${f.pkg}
 • Notes & Preferences: ${f.note || 'None'}`
 
-    const url = wa(msg)
+    const url = wa(msg, FORM_PHONE)
     setWaUrl(url)
     setStatus('success')
     window.open(url, '_blank', 'noreferrer')
