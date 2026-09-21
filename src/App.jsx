@@ -17,7 +17,7 @@ import {
 import { packages } from './data'
 
 const PHONE = '9975110727'
-const FORM_PHONE = '9795255947'
+const FORM_PHONE = '9975110727'
 const wa = (text, phone = PHONE) => `https://wa.me/91${phone}?text=${encodeURIComponent(text)}`
 const WA_DEFAULT = wa(
   "Hello Shahu Catering! I found your website and I'd like to know more about your catering packages. Could you please share the menu and pricing?"
@@ -142,11 +142,10 @@ function Nav({ active }) {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
-          solid
+        className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${solid
             ? 'bg-white/95 py-2.5 sm:py-3 shadow-[0_1px_0_rgba(184,137,58,0.25)] backdrop-blur-md'
             : 'bg-white/80 py-3 sm:py-4 backdrop-blur-sm'
-        }`}
+          }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 md:px-8">
           <button onClick={() => to('home')} className="flex items-center gap-2.5 sm:gap-3 text-left" aria-label="Shahu Catering home">
@@ -168,9 +167,8 @@ function Nav({ active }) {
               <button
                 key={id}
                 onClick={() => to(id)}
-                className={`relative py-1 text-[15px] font-medium tracking-wide transition-colors ${
-                  active === id ? 'text-maroon' : 'text-neutral-600 hover:text-maroon'
-                }`}
+                className={`relative py-1 text-[15px] font-medium tracking-wide transition-colors ${active === id ? 'text-maroon' : 'text-neutral-600 hover:text-maroon'
+                  }`}
               >
                 {l}
                 {active === id && (
@@ -234,9 +232,8 @@ function Nav({ active }) {
                 <button
                   key={id}
                   onClick={() => to(id)}
-                  className={`flex min-h-[48px] w-full items-center justify-center py-2 font-display text-3xl font-medium transition ${
-                    active === id ? 'text-maroon font-semibold' : 'text-neutral-600 hover:text-maroon active:text-gold'
-                  }`}
+                  className={`flex min-h-[48px] w-full items-center justify-center py-2 font-display text-3xl font-medium transition ${active === id ? 'text-maroon font-semibold' : 'text-neutral-600 hover:text-maroon active:text-gold'
+                    }`}
                 >
                   {l}
                 </button>
@@ -581,11 +578,10 @@ function MenuSection() {
               <button
                 key={pkg.id}
                 onClick={() => setActiveIdx(idx)}
-                className={`relative shrink-0 rounded-full px-5 sm:px-7 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold transition-all duration-300 min-h-[44px] flex items-center justify-center ${
-                  isSelected
+                className={`relative shrink-0 rounded-full px-5 sm:px-7 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold transition-all duration-300 min-h-[44px] flex items-center justify-center ${isSelected
                     ? 'bg-maroon text-white shadow-md'
                     : 'border border-gold/40 bg-white text-maroon hover:border-gold hover:bg-cream active:scale-95'
-                }`}
+                  }`}
               >
                 <span className="tracking-wide">
                   {pkg.name} · ₹{pkg.price}
