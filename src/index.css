@@ -1,0 +1,14 @@
+@import "tailwindcss";
+@theme {
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Jost", system-ui, sans-serif;
+  --color-maroon: #5a1420;
+  --color-wine: #7a1f2b;
+  --color-gold: #b8893a;
+  --color-cream: #faf6ee;
+}
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+body { font-family: var(--font-sans); color: #2b1a1a; background: #fff; overflow-x: hidden; }
+::selection { background: #b8893a; color: #fff; }
+@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; } }
