@@ -1,39 +1,98 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView, animate } from 'framer-motion'
 import Lenis from 'lenis'
-import { Menu as MenuIcon, X, Phone, MessageCircle, Heart, Building2, Cake, ChefHat, Sparkles, ArrowRight } from 'lucide-react'
+import {
+  Menu as MenuIcon,
+  X,
+  Phone,
+  MessageCircle,
+  Heart,
+  Building2,
+  Cake,
+  ChefHat,
+  Sparkles,
+  ArrowRight,
+  UtensilsCrossed,
+  CheckCircle2
+} from 'lucide-react'
 import { packages } from './data'
 
 const PHONE = '9975110727'
 const WA = `https://wa.me/91${PHONE}`
-const NAV = [['home', 'Home'], ['about', 'About'], ['menu', 'Menu'], ['gallery', 'Gallery'], ['contact', 'Contact']]
-// Stock photos (Unsplash). Swap any ID here to change an image.
+const NAV = [
+  ['home', 'Home'],
+  ['about', 'About'],
+  ['menu', 'Menu'],
+  ['gallery', 'Gallery'],
+  ['contact', 'Contact'],
+]
+
+// Stock photos (Unsplash).
 const P = {
-  hero: 'photo-1519741497674-611481863552', arch: 'photo-1555244162-803834f70033', about: 'photo-1414235077428-338989a2e8c0',
-  g1: 'photo-1478146059778-26028b07395a', g2: 'photo-1585937421612-70a008356fbe', g3: 'photo-1464366400600-7168b8af9bc3',
-  g4: 'photo-1555939594-58d7cb561ad1', g5: 'photo-1601050690597-df0568f70950', g6: 'photo-1563805042-7684c019e1cb',
+  hero: 'photo-1519741497674-611481863552',
+  about: 'photo-1414235077428-338989a2e8c0',
+  g1: 'photo-1478146059778-26028b07395a',
+  g2: 'photo-1585937421612-70a008356fbe',
+  g3: 'photo-1464366400600-7168b8af9bc3',
+  g4: 'photo-1555939594-58d7cb561ad1',
+  g5: 'photo-1601050690597-df0568f70950',
+  g6: 'photo-1563805042-7684c019e1cb',
 }
+
 const ease = [0.22, 1, 0.36, 1]
-const D = 1.6 // delay for hero sequence (after preloader)
 
 const go = (id) => {
   const el = document.getElementById(id)
   if (!el) return
-  if (window.__lenis) window.__lenis.scrollTo(el, { offset: -72, duration: 1.4 })
+  if (window.__lenis) window.__lenis.scrollTo(el, { offset: -72, duration: 1.2 })
   else el.scrollIntoView({ behavior: 'smooth' })
 }
 
 const Img = ({ id, w = 1200, className = '', alt = '' }) => {
   const [bad, setBad] = useState(false)
-  if (bad) return <div role="img" aria-label={alt} className={`${className} bg-gradient-to-br from-cream via-amber-50 to-rose-100`} />
-  return <img src={`https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=75`} alt={alt} loading="lazy" onError={() => setBad(true)} className={className} />
+  if (bad) {
+    return (
+      <div
+        role="img"
+        aria-label={alt}
+        className={`${className} bg-gradient-to-br from-cream via-[#f7f1e6] to-[#ebdcbe]`}
+      />
+    )
+  }
+  return (
+    <img
+      src={`https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=75`}
+      alt={alt}
+      loading="lazy"
+      onError={() => setBad(true)}
+      className={className}
+    />
+  )
 }
 
-const Reveal = ({ children, delay = 0, y = 40, className = '' }) => (
-  <motion.div className={className} initial={{ opacity: 0, y }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.9, delay, ease }}>{children}</motion.div>
+const Reveal = ({ children, delay = 0, y = 30, className = '' }) => (
+  <motion.div
+    className={className}
+    initial={{ opacity: 0, y }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: '-60px' }}
+    transition={{ duration: 0.8, delay, ease }}
+  >
+    {children}
+  </motion.div>
 )
-const Title = ({ children, className = '' }) => (
-  <Reveal><h2 className={`font-display text-4xl font-semibold leading-[1.05] text-maroon md:text-6xl ${className}`}>{children}</h2></Reveal>
+
+const Title = ({ children, className = '', subtitle = '' }) => (
+  <Reveal>
+    {subtitle && (
+      <p className="mb-2 text-xs uppercase tracking-[0.25em] text-gold font-medium">
+        {subtitle}
+      </p>
+    )}
+    <h2 className={`font-display text-4xl font-semibold leading-[1.08] text-maroon md:text-5xl lg:text-6xl ${className}`}>
+      {children}
+    </h2>
+  </Reveal>
 )
 
 function Count({ to, prefix = '', suffix = '' }) {
@@ -42,7 +101,7 @@ function Count({ to, prefix = '', suffix = '' }) {
   const [n, setN] = useState(0)
   useEffect(() => {
     if (!seen) return
-    const c = animate(0, to, { duration: 2, ease: 'easeOut', onUpdate: (v) => setN(Math.round(v)) })
+    const c = animate(0, to, { duration: 1.8, ease: 'easeOut', onUpdate: (v) => setN(Math.round(v)) })
     return () => c.stop()
   }, [seen, to])
   return <span ref={ref}>{prefix}{n}{suffix}</span>
@@ -51,40 +110,111 @@ function Count({ to, prefix = '', suffix = '' }) {
 function Nav({ active }) {
   const [solid, setSolid] = useState(false)
   const [open, setOpen] = useState(false)
+
   useEffect(() => {
-    const f = () => setSolid(window.scrollY > 40)
-    f(); window.addEventListener('scroll', f, { passive: true })
+    const f = () => setSolid(window.scrollY > 30)
+    f()
+    window.addEventListener('scroll', f, { passive: true })
     return () => window.removeEventListener('scroll', f)
   }, [])
-  const to = (id) => { setOpen(false); go(id) }
+
+  const to = (id) => {
+    setOpen(false)
+    go(id)
+  }
+
   return (
     <>
-      <motion.header initial={{ y: -100 }} animate={{ y: 0 }} transition={{ duration: 1, delay: D, ease }}
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${solid ? 'bg-white/85 py-2 shadow-[0_1px_0_rgba(184,137,58,.3)] backdrop-blur-xl' : 'py-4'}`}>
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+          solid
+            ? 'bg-white/95 py-3 shadow-[0_1px_0_rgba(184,137,58,0.25)] backdrop-blur-md'
+            : 'bg-white/80 py-4 backdrop-blur-sm'
+        }`}
+      >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 md:px-8">
-          <button onClick={() => to('home')} className="flex items-center gap-3" aria-label="Shahu Catering home">
-            <span className="block h-12 w-12 overflow-hidden rounded-full border border-gold/50 bg-cream">
-              <img src="/logo.png" alt="" className="-ml-[65%] -mt-[6%] w-[230%] max-w-none" />
+          <button onClick={() => to('home')} className="flex items-center gap-3 text-left" aria-label="Shahu Catering home">
+            <span className="block h-11 w-11 overflow-hidden rounded-full border border-gold/40 bg-cream p-0.5 shadow-sm">
+              <img src="/logo.webp" onError={(e) => { e.currentTarget.src = '/logo.png' }} alt="" className="h-full w-full object-cover rounded-full" />
             </span>
-            <span className="font-display text-2xl font-semibold leading-none text-maroon">Shahu Catering</span>
+            <div>
+              <span className="block font-display text-xl font-semibold leading-tight text-maroon sm:text-2xl">
+                Shahu Catering
+              </span>
+              <span className="block text-[10px] uppercase tracking-[0.2em] text-gold font-medium">
+                Event Management
+              </span>
+            </div>
           </button>
-          <nav className="hidden items-center gap-9 md:flex">
+
+          <nav className="hidden items-center gap-8 md:flex">
             {NAV.map(([id, l]) => (
-              <button key={id} onClick={() => to(id)} className={`relative py-1 text-[15px] tracking-wide transition-colors ${active === id ? 'text-maroon' : 'text-neutral-600 hover:text-maroon'}`}>
-                {l}{active === id && <motion.span layoutId="navline" className="absolute inset-x-0 -bottom-0.5 h-px bg-gold" />}
+              <button
+                key={id}
+                onClick={() => to(id)}
+                className={`relative py-1 text-[15px] font-medium tracking-wide transition-colors ${
+                  active === id ? 'text-maroon' : 'text-neutral-600 hover:text-maroon'
+                }`}
+              >
+                {l}
+                {active === id && (
+                  <motion.span
+                    layoutId="navline"
+                    className="absolute inset-x-0 -bottom-0.5 h-[1.5px] bg-gold"
+                  />
+                )}
               </button>
             ))}
           </nav>
-          <a href={`tel:${PHONE}`} className="hidden rounded-full bg-maroon px-6 py-2.5 text-sm text-white transition hover:bg-wine md:block">Call {PHONE}</a>
-          <button className="text-maroon md:hidden" onClick={() => setOpen(!open)} aria-label="Toggle menu">{open ? <X /> : <MenuIcon />}</button>
+
+          <div className="hidden items-center gap-4 md:flex">
+            <a
+              href={`tel:${PHONE}`}
+              className="group flex items-center gap-2 rounded-full border border-gold/40 bg-cream/60 px-5 py-2 text-xs font-semibold uppercase tracking-wider text-maroon transition hover:border-gold hover:bg-maroon hover:text-white"
+            >
+              <Phone className="h-3.5 w-3.5 text-gold group-hover:text-white" />
+              <span>{PHONE}</span>
+            </a>
+          </div>
+
+          <button
+            className="p-1 text-maroon md:hidden"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+          >
+            {open ? <X className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+          </button>
         </div>
-      </motion.header>
+      </header>
+
       <AnimatePresence>
         {open && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-40 flex flex-col items-center justify-center gap-7 bg-white md:hidden">
-            {NAV.map(([id, l], i) => (
-              <motion.button key={id} initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.08 * i, ease }} onClick={() => to(id)} className="font-display text-4xl text-maroon">{l}</motion.button>
-            ))}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-40 flex flex-col justify-center bg-white px-8 md:hidden"
+          >
+            <div className="space-y-6 text-center">
+              {NAV.map(([id, l]) => (
+                <button
+                  key={id}
+                  onClick={() => to(id)}
+                  className="block w-full border-b border-gold/20 pb-4 font-display text-3xl font-medium text-maroon transition active:text-gold"
+                >
+                  {l}
+                </button>
+              ))}
+              <div className="pt-6">
+                <a
+                  href={`tel:${PHONE}`}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-maroon px-8 py-3.5 text-sm font-medium text-white shadow-lg shadow-maroon/20"
+                >
+                  <Phone className="h-4 w-4 text-gold" /> Call {PHONE}
+                </a>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -93,46 +223,133 @@ function Nav({ active }) {
 }
 
 function Hero() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const y1 = useTransform(scrollYProgress, [0, 1], [0, 140])
-  const y2 = useTransform(scrollYProgress, [0, 1], [0, -70])
-  const words = 'Feasts worth gathering for'.split(' ')
   return (
-    <section id="home" ref={ref} className="relative overflow-hidden bg-white pt-28">
-      <div className="pointer-events-none absolute -left-40 top-20 h-96 w-96 rounded-full bg-gold/15 blur-3xl" />
-      <div className="pointer-events-none absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-wine/10 blur-3xl" />
-      <div className="relative mx-auto grid min-h-[calc(100vh-7rem)] max-w-7xl items-center gap-12 px-5 pb-20 md:px-8 lg:grid-cols-2">
-        <div>
-          <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: D, duration: 0.9, ease }} className="mb-5 font-display text-2xl italic text-gold">Good food brings people together</motion.p>
-          <h1 className="font-display text-6xl font-semibold leading-[0.98] text-maroon sm:text-7xl xl:text-8xl">
-            {words.map((w, i) => (
-              <span key={i} className="mr-4 inline-block overflow-hidden align-bottom">
-                <motion.span className="inline-block" initial={{ y: '110%' }} animate={{ y: 0 }} transition={{ duration: 1.1, delay: D + 0.15 + i * 0.13, ease }}>{w}</motion.span>
-              </span>
-            ))}
-          </h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: D + 0.9, duration: 0.9, ease }} className="mt-7 max-w-lg text-lg leading-relaxed text-neutral-600">
-            Weddings, receptions, birthdays and corporate events, catered with a full menu of live chaat, curries, Chinese and royal sweets.
-          </motion.p>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: D + 1.1, duration: 0.9, ease }} className="mt-9 flex flex-wrap gap-4">
-            <button onClick={() => go('menu')} className="group flex items-center gap-2 rounded-full bg-maroon px-8 py-4 text-white shadow-xl shadow-maroon/20 transition hover:bg-wine">Explore packages <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></button>
-            <button onClick={() => go('contact')} className="rounded-full border border-gold px-8 py-4 text-maroon transition hover:bg-gold hover:text-white">Get a quote</button>
-          </motion.div>
+    <section id="home" className="relative bg-white pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden">
+      {/* Subtle gold ambient glow */}
+      <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-[450px] w-[750px] rounded-full bg-gold/10 blur-[120px]" />
+
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        {/* Top Editorial Eyebrow Bar */}
+        <div className="flex items-center justify-between border-b border-gold/25 pb-4 mb-8">
+          <span className="text-xs uppercase tracking-[0.25em] text-gold font-medium">
+            Royal Banquets & Catering
+          </span>
+          <span className="hidden sm:inline-block text-xs uppercase tracking-[0.2em] text-neutral-400">
+            Pure Vegetarian Excellence
+          </span>
+          <span className="text-xs tracking-wider text-maroon font-medium">
+            Reservations: {PHONE}
+          </span>
         </div>
-        <div className="relative mx-auto h-[520px] w-full max-w-[520px] md:h-[640px]">
-          <motion.div style={{ y: y1 }} initial={{ clipPath: 'inset(100% 0 0 0)' }} animate={{ clipPath: 'inset(0% 0 0 0)' }} transition={{ delay: D + 0.2, duration: 1.4, ease }} className="absolute right-0 top-0 h-[85%] w-[78%]">
-            <Img id={P.hero} w={1000} alt="Wedding celebration" className="h-full w-full rounded-t-full border-[6px] border-white object-cover shadow-2xl" />
-          </motion.div>
-          <motion.div style={{ y: y2 }} initial={{ clipPath: 'inset(100% 0 0 0)' }} animate={{ clipPath: 'inset(0% 0 0 0)' }} transition={{ delay: D + 0.6, duration: 1.4, ease }} className="absolute bottom-0 left-0 h-[46%] w-[46%]">
-            <Img id={P.arch} w={700} alt="Plated food" className="h-full w-full rounded-t-full border-[6px] border-white object-cover shadow-2xl" />
-          </motion.div>
-          <motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: D + 1.6, type: 'spring' }} className="absolute right-0 top-[58%]">
-            <motion.div animate={{ y: [0, -12, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }} className="rounded-2xl border border-gold/40 bg-white/95 px-5 py-4 text-center shadow-2xl backdrop-blur">
-              <p className="text-xs text-neutral-500">Packages from</p>
-              <p className="font-display text-3xl font-semibold text-maroon">₹280<span className="text-base font-normal"> / plate</span></p>
+
+        {/* Large Serif Headline & Asymmetric Intro */}
+        <div className="grid lg:grid-cols-12 gap-8 items-end mb-10 md:mb-14">
+          <div className="lg:col-span-8">
+            <motion.h1
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease }}
+              className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.3rem] font-semibold text-maroon leading-[0.98] tracking-tight"
+            >
+              Feasts Worth <br />
+              <span className="italic font-normal text-gold">Gathering For.</span>
+            </motion.h1>
+          </div>
+          <div className="lg:col-span-4 lg:pb-2">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1, ease }}
+              className="text-neutral-600 text-base md:text-lg leading-relaxed font-sans"
+            >
+              From grand royal wedding banquets to milestone family celebrations. Multi-course vegetarian feasts curated with live counters, artisanal chaat, and royal sweets.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease }}
+              className="mt-6 flex flex-wrap gap-4 items-center"
+            >
+              <button
+                onClick={() => go('menu')}
+                className="group inline-flex items-center gap-2 rounded-full bg-maroon px-7 py-3.5 text-sm font-medium text-white shadow-lg shadow-maroon/15 transition hover:bg-wine"
+              >
+                Explore Curated Menus
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1 text-gold" />
+              </button>
+              <button
+                onClick={() => go('contact')}
+                className="inline-flex items-center gap-2 rounded-full border border-gold/70 px-7 py-3.5 text-sm font-medium text-maroon transition hover:bg-gold hover:text-white"
+              >
+                Check Date Availability
+              </button>
             </motion.div>
-          </motion.div>
+          </div>
+        </div>
+
+        {/* Bold Full-Width Composition with Big Photo */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98, y: 25 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.15, ease }}
+          className="relative w-full overflow-hidden rounded-2xl border border-gold/30 shadow-2xl"
+        >
+          <div className="relative h-[380px] sm:h-[480px] md:h-[580px] w-full">
+            <Img
+              id={P.hero}
+              w={1800}
+              alt="Luxury wedding banquet and catering setup by Shahu Catering"
+              className="h-full w-full object-cover"
+            />
+            {/* Vignette overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-maroon/85 via-black/25 to-transparent" />
+
+            {/* Asymmetric Floating Insignia & Caption Overlay */}
+            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+              <div className="max-w-xl">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/95 backdrop-blur-md px-3.5 py-1 text-xs uppercase tracking-wider text-maroon font-medium mb-3 shadow">
+                  <Sparkles className="h-3.5 w-3.5 text-gold" /> Live Sigdi, Chaat & Royal Sweets
+                </span>
+                <p className="font-display text-2xl sm:text-3xl text-white font-medium leading-snug">
+                  Impeccably prepared vegetarian banquets tailored for 500 to 5,000+ guests.
+                </p>
+              </div>
+
+              {/* Floating Package Seal */}
+              <div className="self-start sm:self-auto rounded-xl border border-gold/40 bg-white/95 backdrop-blur-md p-4 sm:p-5 text-right shadow-2xl">
+                <p className="text-[11px] uppercase tracking-widest text-neutral-500 font-medium">Bespoke Catering From</p>
+                <p className="font-display text-3xl sm:text-4xl font-semibold text-maroon">
+                  ₹280<span className="text-sm font-normal text-neutral-600"> / plate</span>
+                </p>
+                <p className="text-xs text-gold font-medium mt-0.5">Silver · Golden · Platinum</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Editorial Sub-bar with 3 Key Highlights */}
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-gold/20">
+          <div className="flex items-start gap-4">
+            <span className="font-display text-2xl text-gold font-semibold leading-none">01</span>
+            <div>
+              <p className="text-sm font-semibold text-maroon">Authentic Heritage Flavors</p>
+              <p className="text-xs text-neutral-500 mt-1">Traditional recipes cooked fresh with premium pure-veg ingredients</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-4">
+            <span className="font-display text-2xl text-gold font-semibold leading-none">02</span>
+            <div>
+              <p className="text-sm font-semibold text-maroon">Signature Live Counters</p>
+              <p className="text-xs text-neutral-500 mt-1">Sigdi dosa, live pasta, Chinese, Maggi, and custom chaat bars</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-4">
+            <span className="font-display text-2xl text-gold font-semibold leading-none">03</span>
+            <div>
+              <p className="text-sm font-semibold text-maroon">Seamless Banquet Management</p>
+              <p className="text-xs text-neutral-500 mt-1">Dedicated service staff and punctual hospitality for every celebration</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -140,12 +357,27 @@ function Hero() {
 }
 
 function Marquee() {
-  const t = ['Weddings', 'Receptions', 'Engagements', 'Birthdays', 'Corporate events', 'Live counters', 'Royal sweets']
+  const t = [
+    'Weddings & Receptions',
+    'Signature Live Counters',
+    'Artisanal Chaat & Sigdi',
+    'Royal Indian Sweets',
+    'Corporate Banquets',
+    'Milestone Birthdays',
+    'Pure Vegetarian Heritage',
+  ]
   return (
-    <div className="overflow-hidden bg-maroon py-5">
-      <motion.div className="flex w-max whitespace-nowrap" animate={{ x: ['0%', '-50%'] }} transition={{ duration: 32, ease: 'linear', repeat: Infinity }}>
+    <div className="overflow-hidden border-y border-gold/30 bg-maroon py-4">
+      <motion.div
+        className="flex w-max whitespace-nowrap"
+        animate={{ x: ['0%', '-50%'] }}
+        transition={{ duration: 32, ease: 'linear', repeat: Infinity }}
+      >
         {[...t, ...t].map((x, i) => (
-          <span key={i} className="flex items-center gap-12 pr-12 font-display text-2xl italic text-white/90">{x}<Sparkles className="h-4 w-4 text-gold" /></span>
+          <span key={i} className="flex items-center gap-10 pr-10 font-display text-xl sm:text-2xl italic text-white/95">
+            {x}
+            <Sparkles className="h-3.5 w-3.5 text-gold" />
+          </span>
         ))}
       </motion.div>
     </div>
@@ -153,107 +385,302 @@ function Marquee() {
 }
 
 function About() {
-  const stats = [[3, '', 'Signature packages'], [100, '+', 'Dishes to choose from'], [280, '', 'Starting price per plate', '₹'], [500, '+', 'Guests: package rates apply']]
-  const svc = [[Heart, 'Weddings & receptions', 'Full multi-course menus for your biggest day.'], [Cake, 'Birthdays & parties', 'Chaat, snacks and sweets guests talk about.'], [Building2, 'Corporate events', 'Clean, on-time service for teams and clients.'], [ChefHat, 'Live counters', 'Dosa, chaat, Maggi and more, made fresh.']]
+  const stats = [
+    [3, '', 'Signature packages', ''],
+    [100, '+', 'Dishes to choose from', ''],
+    [280, '', 'Starting price per plate', '₹'],
+    [500, '+', 'Guests: package rates apply', ''],
+  ]
+
+  const services = [
+    {
+      num: '01',
+      icon: Heart,
+      title: 'Weddings & Receptions',
+      desc: 'Complete multi-course royal dining crafted to leave an unforgettable impression on every wedding guest.',
+    },
+    {
+      num: '02',
+      icon: Cake,
+      title: 'Birthdays & Milestones',
+      desc: 'Vibrant live food counters, artisanal chaat, and indulgent mithai that keep guests raving.',
+    },
+    {
+      num: '03',
+      icon: Building2,
+      title: 'Corporate Banquets',
+      desc: 'Punctual, dignified dining logistics and hygienic service for corporate conferences, galas, and gatherings.',
+    },
+    {
+      num: '04',
+      icon: ChefHat,
+      title: 'Signature Live Counters',
+      desc: 'Made-to-order Sigdi dosas, sizzling Chinese pans, live Maggi, and custom pasta bars served piping hot.',
+    },
+  ]
+
   return (
-    <section id="about" className="bg-white py-28">
-      <div className="mx-auto grid max-w-7xl items-center gap-20 px-5 md:px-8 lg:grid-cols-2">
-        <Reveal>
-          <div className="relative">
-            <div className="absolute -left-4 -top-4 h-full w-full rounded-[2rem] border border-gold/60" />
-            <Img id={P.about} alt="Chef plating a dish" className="relative h-[520px] w-full rounded-[2rem] object-cover" />
-            <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }} className="absolute -bottom-8 -right-3 w-40 rounded-2xl bg-white p-2 shadow-2xl md:w-52">
-              <img src="/logo.png" alt="Shahu Catering logo" className="rounded-xl" />
-            </motion.div>
+    <section id="about" className="bg-white py-24 md:py-32">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        {/* Asymmetric Editorial Spread */}
+        <div className="grid items-center gap-16 lg:grid-cols-12">
+          {/* Left: Asymmetric Framed Imagery */}
+          <div className="lg:col-span-5">
+            <Reveal>
+              <div className="relative">
+                {/* Thin gold offset hairline frame */}
+                <div className="absolute -left-3 -top-3 h-full w-full rounded-2xl border border-gold/40" />
+                <Img
+                  id={P.about}
+                  alt="Chef preparing luxury banquet meal"
+                  className="relative h-[440px] sm:h-[500px] w-full rounded-2xl object-cover shadow-xl"
+                />
+                {/* Floating Medallion */}
+                <div className="absolute -bottom-6 -right-4 flex items-center gap-3 rounded-xl border border-gold/30 bg-white p-3 shadow-xl sm:p-4">
+                  <span className="block h-12 w-12 shrink-0 overflow-hidden rounded-full border border-gold/40 bg-cream p-0.5">
+                    <img src="/logo.webp" onError={(e) => { e.currentTarget.src = '/logo.png' }} alt="Shahu Logo" className="h-full w-full object-cover rounded-full" />
+                  </span>
+                  <div>
+                    <p className="font-display text-base font-semibold text-maroon leading-tight">Shahu Catering</p>
+                    <p className="text-[11px] uppercase tracking-wider text-gold font-medium">Catering & Events</p>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
           </div>
-        </Reveal>
-        <div>
-          <Title>A kitchen that treats every plate like a guest of honour</Title>
-          <Reveal delay={0.15}><p className="mt-6 max-w-xl text-lg leading-relaxed text-neutral-600">Shahu Catering & Event Management cooks and manages the food for your celebration, from the first welcome drink to the last spoon of halwa. Pick your dishes from a fixed-price package and we take care of the rest.</p></Reveal>
-          <div className="mt-10 grid grid-cols-2 gap-6">
-            {stats.map(([n, s, l, p], i) => (
-              <Reveal key={l} delay={0.1 * i} y={20}>
-                <p className="font-display text-5xl font-semibold text-wine"><Count to={n} suffix={s} prefix={p} /></p>
-                <p className="mt-1 text-sm text-neutral-500">{l}</p>
-              </Reveal>
-            ))}
+
+          {/* Right: Editorial Narrative & Statistics */}
+          <div className="lg:col-span-7">
+            <Title subtitle="Our Culinary Philosophy">
+              A kitchen that treats every plate like a guest of honour.
+            </Title>
+            <Reveal delay={0.1}>
+              <p className="mt-6 text-base sm:text-lg leading-relaxed text-neutral-600">
+                At Shahu Catering & Event Management, food is never an afterthought—it is the centerpiece of memory. From the first refreshing welcome punch to the final spoon of warm Gulab Jamun or Basundi, our team handles every preparation with authentic regional taste, strict hygiene, and warm hospitality.
+              </p>
+            </Reveal>
+
+            {/* Metrics separated by thin gold hairlines (no rounded card boxes) */}
+            <div className="mt-10 grid grid-cols-2 gap-y-8 gap-x-6 border-t border-gold/20 pt-8 sm:grid-cols-4">
+              {stats.map(([n, s, l, p], i) => (
+                <Reveal key={l} delay={0.08 * i} y={15} className="border-l border-gold/30 pl-4">
+                  <p className="font-display text-4xl sm:text-5xl font-semibold text-maroon">
+                    <Count to={n} suffix={s} prefix={p} />
+                  </p>
+                  <p className="mt-1 text-xs text-neutral-500 leading-snug">{l}</p>
+                </Reveal>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-      <div className="mx-auto mt-24 grid max-w-7xl gap-5 px-5 sm:grid-cols-2 md:px-8 lg:grid-cols-4">
-        {svc.map(([Icon, t, d], i) => (
-          <Reveal key={t} delay={i * 0.1}>
-            <motion.div whileHover={{ y: -8 }} className="group h-full rounded-3xl border border-gold/25 bg-cream/60 p-7 transition-colors hover:border-gold hover:bg-white hover:shadow-xl">
-              <Icon className="h-9 w-9 text-gold transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110" />
-              <h3 className="mt-5 font-display text-2xl font-semibold text-maroon">{t}</h3>
-              <p className="mt-2 text-neutral-600">{d}</p>
-            </motion.div>
-          </Reveal>
-        ))}
+
+        {/* Services Breakdown: Editorial Grid with Thin Gold Hairlines */}
+        <div className="mt-24 border-t border-gold/20 pt-16">
+          <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.25em] text-gold font-medium">Bespoke Services</p>
+              <h3 className="font-display text-3xl font-semibold text-maroon sm:text-4xl">What We Bring to Your Feast</h3>
+            </div>
+            <p className="text-sm text-neutral-500 max-w-sm">
+              Tailored culinary execution across wedding celebrations, private parties, and corporate events.
+            </p>
+          </div>
+
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {services.map((svc, i) => {
+              const Icon = svc.icon
+              return (
+                <Reveal key={svc.title} delay={i * 0.08}>
+                  <div className="group relative border-t border-gold/30 pt-6 transition-all duration-300 hover:border-gold">
+                    <div className="flex items-center justify-between">
+                      <span className="font-display text-sm font-semibold tracking-widest text-gold">{svc.num}</span>
+                      <Icon className="h-5 w-5 text-gold transition-transform duration-300 group-hover:scale-110" />
+                    </div>
+                    <h4 className="mt-4 font-display text-2xl font-semibold text-maroon">{svc.title}</h4>
+                    <p className="mt-2 text-sm leading-relaxed text-neutral-600">{svc.desc}</p>
+                  </div>
+                </Reveal>
+              )
+            })}
+          </div>
+        </div>
       </div>
     </section>
   )
 }
 
 function MenuSection() {
-  const [i, setI] = useState(0)
-  const p = packages[i]
+  const [activeIdx, setActiveIdx] = useState(0)
+  const currentPkg = packages[activeIdx]
+
   return (
-    <section id="menu" className="bg-cream py-28">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
+    <section id="menu" className="bg-[#faf6ee] py-24 md:py-32">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        {/* Section Header */}
         <div className="text-center">
-          <Title>Choose your package, then pick your dishes</Title>
-          <Reveal delay={0.1}><p className="mx-auto mt-5 max-w-xl text-neutral-600">Prices are per plate. Each course shows how many dishes you can choose.</p></Reveal>
+          <Title subtitle="Curated Banquet Packages">
+            The Printed Banquet Menu
+          </Title>
+          <Reveal delay={0.1}>
+            <p className="mx-auto mt-4 max-w-2xl text-base text-neutral-600">
+              Select your package below. Each course details the allowance of selections included in your per-plate tariff.
+            </p>
+          </Reveal>
         </div>
-        <Reveal delay={0.15} className="mt-10 flex flex-wrap justify-center gap-2">
-          {packages.map((x, k) => (
-            <button key={x.id} onClick={() => setI(k)} className="relative rounded-full px-7 py-3 text-[15px] transition-colors" style={{ color: i === k ? '#fff' : '#5a1420' }}>
-              {i === k && <motion.span layoutId="pkg" className="absolute inset-0 rounded-full bg-maroon" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
-              <span className="relative">{x.name} · ₹{x.price}</span>
-            </button>
-          ))}
+
+        {/* Tab Selection */}
+        <Reveal delay={0.15} className="mt-10 flex flex-wrap justify-center gap-3">
+          {packages.map((pkg, idx) => {
+            const isSelected = activeIdx === idx
+            return (
+              <button
+                key={pkg.id}
+                onClick={() => setActiveIdx(idx)}
+                className={`relative rounded-full px-7 py-3 text-sm font-medium transition-all duration-300 ${
+                  isSelected
+                    ? 'bg-maroon text-white shadow-md'
+                    : 'border border-gold/40 bg-white text-maroon hover:border-gold hover:bg-cream'
+                }`}
+              >
+                <span className="tracking-wide">
+                  {pkg.name} · ₹{pkg.price}
+                </span>
+              </button>
+            )
+          })}
         </Reveal>
+
+        {/* The Printed Restaurant Menu Card */}
         <AnimatePresence mode="wait">
-          <motion.div key={p.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease }}>
-            <p className="mt-8 text-center font-display text-2xl italic text-gold">{p.tag}</p>
-            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {p.cats.map(([t, b, items], k) => (
-                <motion.div key={t} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * k, duration: 0.6, ease }} whileHover={{ y: -6 }}
-                  className="rounded-3xl border border-gold/25 bg-white p-7 shadow-sm transition-shadow hover:shadow-xl">
-                  <div className="flex items-center justify-between gap-3">
-                    <h3 className="font-display text-2xl font-semibold text-maroon">{t}</h3>
-                    <span className="shrink-0 rounded-full bg-gold/15 px-3 py-1 text-xs text-gold">{b}</span>
+          <motion.div
+            key={currentPkg.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.45, ease }}
+            className="mt-12"
+          >
+            <div className="relative rounded-2xl border-2 border-[#d6b77c] bg-[#fdfbf7] p-6 sm:p-10 md:p-14 shadow-2xl">
+              {/* Inner delicate gold hairline border */}
+              <div className="pointer-events-none absolute inset-3 sm:inset-5 rounded-xl border border-gold/30" />
+
+              {/* Menu Card Masthead */}
+              <div className="relative z-10 border-b border-gold/30 pb-8 text-center">
+                <div className="mb-2 flex items-center justify-center gap-3">
+                  <span className="h-px w-10 bg-gold/50" />
+                  <span className="text-[11px] uppercase tracking-[0.25em] text-gold font-semibold">
+                    Shahu Catering & Event Management
+                  </span>
+                  <span className="h-px w-10 bg-gold/50" />
+                </div>
+
+                <h3 className="font-display text-4xl sm:text-5xl md:text-6xl font-semibold text-maroon tracking-tight">
+                  {currentPkg.name} Collection
+                </h3>
+
+                <p className="mt-2 font-display text-xl sm:text-2xl italic text-gold">
+                  {currentPkg.tag}
+                </p>
+
+                <div className="mt-5 inline-flex items-baseline gap-2 rounded-full border border-gold/40 bg-white px-5 py-1.5 shadow-sm">
+                  <span className="text-xs uppercase tracking-wider text-neutral-500 font-medium">Per Plate</span>
+                  <span className="font-display text-2xl font-bold text-maroon">₹{currentPkg.price}</span>
+                  <span className="text-xs text-neutral-500">all inclusive</span>
+                </div>
+              </div>
+
+              {/* Courses Breakdown: Printed Restaurant Menu Style (No chips inside cards!) */}
+              <div className="relative z-10 mt-10 grid gap-x-12 gap-y-8 md:grid-cols-2">
+                {currentPkg.cats.map(([courseTitle, countNote, items]) => (
+                  <div key={courseTitle} className="border-b border-gold/20 pb-5">
+                    {/* Course Header with small right-aligned count note */}
+                    <div className="flex items-baseline justify-between gap-4 border-b border-gold/15 pb-1.5 mb-2.5">
+                      <h4 className="font-display text-xl sm:text-2xl font-semibold text-maroon tracking-tight">
+                        {courseTitle}
+                      </h4>
+                      <span className="shrink-0 text-xs uppercase tracking-widest text-gold font-medium italic">
+                        {countNote}
+                      </span>
+                    </div>
+
+                    {/* Dishes as a clean, flowing editorial list */}
+                    <p className="font-sans text-sm sm:text-[15px] leading-relaxed text-neutral-700">
+                      {items.join(' · ')}
+                    </p>
                   </div>
-                  <ul className="mt-5 flex flex-wrap gap-2">
-                    {items.map((it) => <li key={it} className="rounded-full border border-gold/30 bg-cream/70 px-3 py-1 text-[13px] text-neutral-700">{it}</li>)}
-                  </ul>
-                </motion.div>
-              ))}
+                ))}
+              </div>
+
+              {/* Menu Card Policy & Direct Booking Callout */}
+              <div className="relative z-10 mt-12 border-t border-gold/30 pt-8 text-center">
+                <div className="mx-auto max-w-xl">
+                  <p className="font-display text-xl text-maroon font-medium">
+                    Package rates apply to gatherings of 500+ guests
+                  </p>
+                  <p className="mt-1 text-xs text-neutral-500 leading-relaxed">
+                    Custom live counters, dietary variations, and live sweet sizzlers can be arranged. Full payment is deposited prior to the start of the event.
+                  </p>
+                  <div className="mt-6">
+                    <button
+                      onClick={() => go('contact')}
+                      className="inline-flex items-center gap-2 rounded-full bg-maroon px-8 py-3.5 text-sm font-medium text-white shadow-md transition hover:bg-wine"
+                    >
+                      Inquire for {currentPkg.name} Menu
+                      <ArrowRight className="h-4 w-4 text-gold" />
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.div>
         </AnimatePresence>
-        <Reveal className="mx-auto mt-14 max-w-2xl rounded-3xl border border-maroon/15 bg-white p-7 text-center">
-          <p className="font-display text-2xl text-maroon">These rates apply to events above 500 guests</p>
-          <p className="mt-2 text-neutral-600">Full payment must be deposited before the event starts.</p>
-          <button onClick={() => go('contact')} className="mt-5 rounded-full bg-maroon px-8 py-3 text-white transition hover:bg-wine">Check my date</button>
-        </Reveal>
       </div>
     </section>
   )
 }
 
 function Gallery() {
-  const g = [[P.g1, 'Reception setups', 'row-span-2'], [P.g2, 'Rich curries', ''], [P.g3, 'Wedding tables', ''], [P.g4, 'Live grills', ''], [P.g5, 'Biryani & pulao', 'row-span-2'], [P.g6, 'Cold desserts', '']]
+  const g = [
+    [P.g1, 'Grand Reception Banquets', 'md:col-span-2 md:row-span-2'],
+    [P.g2, 'Rich Heritage Curries', ''],
+    [P.g3, 'Bespoke Wedding Tables', ''],
+    [P.g4, 'Live Sigdi & Tandoor Grills', ''],
+    [P.g5, 'Aromatic Biryanis & Pulaos', 'md:col-span-2'],
+    [P.g6, 'Royal Mithai & Desserts', ''],
+  ]
+
   return (
-    <section id="gallery" className="bg-white py-28">
+    <section id="gallery" className="bg-white py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
-        <Title className="max-w-3xl">Moments from tables we have set</Title>
-        <div className="mt-12 grid auto-rows-[220px] grid-cols-2 gap-4 lg:grid-cols-3 lg:auto-rows-[260px]">
-          {g.map(([id, cap, span], i) => (
-            <Reveal key={id} delay={(i % 3) * 0.1} y={30} className={`group relative overflow-hidden rounded-3xl ${span}`}>
-              <Img id={id} w={900} alt={cap} className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-t from-maroon/70 via-transparent to-transparent opacity-80 transition-opacity group-hover:opacity-100" />
-              <p className="absolute bottom-4 left-5 font-display text-2xl text-white">{cap}</p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <Title subtitle="Visual Showcase">
+            Moments From Tables We Have Set
+          </Title>
+          <p className="text-sm sm:text-base text-neutral-600 max-w-md">
+            A glimpse into the celebrations, live counters, and multi-course feasts curated across hundreds of memorable gatherings.
+          </p>
+        </div>
+
+        {/* Editorial Photo Spread */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+          {g.map(([id, caption, spanClass], i) => (
+            <Reveal
+              key={id}
+              delay={(i % 3) * 0.08}
+              y={25}
+              className={`group relative overflow-hidden rounded-2xl border border-gold/25 min-h-[260px] sm:min-h-[290px] ${spanClass}`}
+            >
+              <Img
+                id={id}
+                w={1000}
+                alt={caption}
+                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-maroon/85 via-maroon/20 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-95" />
+              <div className="absolute bottom-4 left-5 right-5">
+                <span className="text-[10px] uppercase tracking-widest text-gold font-medium">Shahu Gallery</span>
+                <p className="font-display text-xl sm:text-2xl text-white font-medium">{caption}</p>
+              </div>
             </Reveal>
           ))}
         </div>
@@ -262,7 +689,9 @@ function Gallery() {
   )
 }
 
-const inp = 'w-full rounded-xl border border-gold/30 bg-white px-4 py-3 outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/20'
+const inp =
+  'w-full rounded-xl border border-gold/30 bg-white px-4 py-3 text-sm text-neutral-800 outline-none transition focus:border-gold focus:ring-1 focus:ring-gold/30'
+
 function Contact() {
   const send = (e) => {
     e.preventDefault()
@@ -270,28 +699,140 @@ function Contact() {
     const msg = `Hello Shahu Catering! I'd like a quote.\nName: ${f.name}\nPhone: ${f.phone}\nEvent date: ${f.date || '-'}\nGuests: ${f.guests || '-'}\nPackage: ${f.pkg}\n${f.note || ''}`
     window.open(`${WA}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener')
   }
+
   return (
-    <section id="contact" className="bg-cream py-28">
-      <div className="mx-auto grid max-w-7xl gap-16 px-5 md:px-8 lg:grid-cols-2">
-        <div>
-          <Title>Tell us about your event</Title>
-          <Reveal delay={0.1}><p className="mt-6 max-w-md text-lg text-neutral-600">Share the date and guest count. We will reply with a menu and quote for your celebration.</p></Reveal>
+    <section id="contact" className="bg-[#faf6ee] py-24 md:py-32">
+      <div className="mx-auto grid max-w-7xl gap-16 px-5 md:px-8 lg:grid-cols-12">
+        {/* Left: Concierge Inquiry Information */}
+        <div className="lg:col-span-5">
+          <Title subtitle="Concierge & Inquiries">
+            Tell us about your celebration.
+          </Title>
+          <Reveal delay={0.1}>
+            <p className="mt-6 text-base sm:text-lg leading-relaxed text-neutral-600">
+              Share your expected guest count and event date. We will prepare an exact proposal, menu breakdown, and quote tailored to your banquet.
+            </p>
+          </Reveal>
+
           <Reveal delay={0.2} className="mt-10 space-y-4">
-            <a href={`tel:${PHONE}`} className="flex items-center gap-4 rounded-2xl border border-gold/30 bg-white p-5 transition hover:shadow-xl"><Phone className="text-gold" /><span><span className="block text-sm text-neutral-500">Mr. Dipesh Shahu</span><span className="font-display text-3xl text-maroon">{PHONE}</span></span></a>
-            <a href={WA} target="_blank" rel="noreferrer" className="flex items-center gap-4 rounded-2xl border border-gold/30 bg-white p-5 transition hover:shadow-xl"><MessageCircle className="text-gold" /><span className="text-lg text-maroon">Chat on WhatsApp</span></a>
+            <a
+              href={`tel:${PHONE}`}
+              className="flex items-center gap-4 rounded-2xl border border-gold/35 bg-white p-5 shadow-sm transition hover:border-gold hover:shadow-lg"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-cream text-maroon">
+                <Phone className="h-5 w-5 text-gold" />
+              </div>
+              <div>
+                <span className="block text-xs uppercase tracking-wider text-neutral-500 font-medium">Direct Inquiries · Mr. Dipesh Shahu</span>
+                <span className="font-display text-2xl sm:text-3xl font-semibold text-maroon">{PHONE}</span>
+              </div>
+            </a>
+
+            <a
+              href={WA}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-4 rounded-2xl border border-gold/35 bg-white p-5 shadow-sm transition hover:border-gold hover:shadow-lg"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-cream text-maroon">
+                <MessageCircle className="h-5 w-5 text-gold" />
+              </div>
+              <div>
+                <span className="block text-xs uppercase tracking-wider text-neutral-500 font-medium">Instant Consultation</span>
+                <span className="font-display text-2xl font-semibold text-maroon">Chat on WhatsApp</span>
+              </div>
+            </a>
+          </Reveal>
+
+          <div className="mt-8 border-t border-gold/20 pt-6 space-y-2">
+            <div className="flex items-center gap-2.5 text-xs text-neutral-600">
+              <CheckCircle2 className="h-4 w-4 text-gold shrink-0" />
+              <span>Menu tastings and live counter customizations available</span>
+            </div>
+            <div className="flex items-center gap-2.5 text-xs text-neutral-600">
+              <CheckCircle2 className="h-4 w-4 text-gold shrink-0" />
+              <span>Packages apply for 500+ guests with dedicated service crew</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Quotation Form with Gold Hairlines */}
+        <div className="lg:col-span-7">
+          <Reveal delay={0.15}>
+            <form
+              onSubmit={send}
+              className="rounded-2xl border border-gold/35 bg-white p-7 sm:p-10 shadow-xl"
+            >
+              <div className="mb-6 border-b border-gold/20 pb-4">
+                <h3 className="font-display text-2xl sm:text-3xl font-semibold text-maroon">
+                  Request a Quotation
+                </h3>
+                <p className="mt-1 text-xs text-neutral-500">
+                  Fill in your details below and we will send a customized menu quotation via WhatsApp.
+                </p>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-neutral-600 font-medium mb-1.5">
+                    Your Name *
+                  </label>
+                  <input required name="name" placeholder="e.g. Ramesh Patil" className={inp} />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-neutral-600 font-medium mb-1.5">
+                    Phone Number *
+                  </label>
+                  <input required name="phone" type="tel" placeholder="e.g. 9876543210" className={inp} />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-neutral-600 font-medium mb-1.5">
+                    Event Date
+                  </label>
+                  <input name="date" type="date" aria-label="Event date" className={inp} />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-neutral-600 font-medium mb-1.5">
+                    Estimated Guests
+                  </label>
+                  <input name="guests" type="number" min="1" placeholder="e.g. 600" className={inp} />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-xs uppercase tracking-wider text-neutral-600 font-medium mb-1.5">
+                    Select Package
+                  </label>
+                  <select name="pkg" aria-label="Package" className={inp}>
+                    {packages.map((x) => (
+                      <option key={x.id}>
+                        {x.name} · ₹{x.price} per plate ({x.tag})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-xs uppercase tracking-wider text-neutral-600 font-medium mb-1.5">
+                    Additional Notes & Preferences
+                  </label>
+                  <textarea
+                    name="note"
+                    rows="3"
+                    placeholder="Specific live counters, date details, or menu preferences..."
+                    className={inp}
+                  />
+                </div>
+                <div className="sm:col-span-2 mt-2">
+                  <button
+                    type="submit"
+                    className="w-full rounded-full bg-maroon py-4 text-sm font-medium text-white shadow-lg shadow-maroon/20 transition hover:bg-wine flex items-center justify-center gap-2"
+                  >
+                    <span>Send Enquiry on WhatsApp</span>
+                    <ArrowRight className="h-4 w-4 text-gold" />
+                  </button>
+                </div>
+              </div>
+            </form>
           </Reveal>
         </div>
-        <Reveal delay={0.15}>
-          <form onSubmit={send} className="grid gap-4 rounded-3xl border border-gold/25 bg-white p-7 shadow-xl sm:grid-cols-2 md:p-9">
-            <input required name="name" placeholder="Your name" className={inp} />
-            <input required name="phone" type="tel" placeholder="Phone number" className={inp} />
-            <input name="date" type="date" aria-label="Event date" className={inp} />
-            <input name="guests" type="number" min="1" placeholder="Number of guests" className={inp} />
-            <select name="pkg" aria-label="Package" className={`${inp} sm:col-span-2`}>{packages.map((x) => <option key={x.id}>{x.name} · ₹{x.price} per plate</option>)}</select>
-            <textarea name="note" rows="3" placeholder="Anything else we should know?" className={`${inp} sm:col-span-2`} />
-            <button className="rounded-full bg-maroon py-4 text-white transition hover:bg-wine sm:col-span-2">Send enquiry on WhatsApp</button>
-          </form>
-        </Reveal>
       </div>
     </section>
   )
@@ -299,51 +840,111 @@ function Contact() {
 
 function Footer() {
   return (
-    <footer className="border-t border-gold/40 bg-white py-12 text-center">
-      <img src="/logo.png" alt="Shahu Catering" className="mx-auto w-40 mix-blend-multiply" />
-      <div className="mt-6 flex flex-wrap justify-center gap-7 text-neutral-600">{NAV.map(([id, l]) => <button key={id} onClick={() => go(id)} className="transition hover:text-maroon">{l}</button>)}</div>
-      <p className="mt-6 text-sm text-neutral-400">© {new Date().getFullYear()} Shahu Catering & Event Management</p>
+    <footer className="border-t border-gold/30 bg-white py-14 text-center">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="flex flex-col items-center justify-center">
+          <span className="block h-16 w-16 overflow-hidden rounded-full border border-gold/40 bg-cream p-1 shadow-sm">
+            <img src="/logo.webp" onError={(e) => { e.currentTarget.src = '/logo.png' }} alt="Shahu Catering Logo" className="h-full w-full object-cover rounded-full" />
+          </span>
+          <h4 className="mt-3 font-display text-2xl font-semibold text-maroon">
+            Shahu Catering & Event Management
+          </h4>
+          <p className="mt-1 text-xs uppercase tracking-[0.2em] text-gold font-medium">
+            Pure Vegetarian Catering & Grand Banquets
+          </p>
+        </div>
+
+        <div className="mt-8 flex flex-wrap justify-center gap-8 text-sm font-medium text-neutral-600">
+          {NAV.map(([id, l]) => (
+            <button
+              key={id}
+              onClick={() => go(id)}
+              className="transition hover:text-maroon"
+            >
+              {l}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-8 border-t border-gold/15 pt-6 text-xs text-neutral-400">
+          <p>© {new Date().getFullYear()} Shahu Catering & Event Management. All rights reserved.</p>
+          <p className="mt-1">Inquiries: +91 {PHONE} · Dedicated Event Management Services</p>
+        </div>
+      </div>
     </footer>
   )
 }
 
 export default function App() {
-  const [ready, setReady] = useState(false)
   const [active, setActive] = useState('home')
   const { scrollYProgress } = useScroll()
   const sx = useSpring(scrollYProgress, { stiffness: 120, damping: 30 })
-  useEffect(() => { const t = setTimeout(() => setReady(true), 1500); return () => clearTimeout(t) }, [])
+
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const l = new Lenis({ duration: 1.25 })
     window.__lenis = l
     let id
-    const raf = (t) => { l.raf(t); id = requestAnimationFrame(raf) }
+    const raf = (t) => {
+      l.raf(t)
+      id = requestAnimationFrame(raf)
+    }
     id = requestAnimationFrame(raf)
-    return () => { cancelAnimationFrame(id); l.destroy(); window.__lenis = null }
+    return () => {
+      cancelAnimationFrame(id)
+      l.destroy()
+      window.__lenis = null
+    }
   }, [])
+
   useEffect(() => {
-    const o = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setActive(e.target.id)), { rootMargin: '-45% 0px -50% 0px' })
-    NAV.forEach(([id]) => { const el = document.getElementById(id); if (el) o.observe(el) })
+    const o = new IntersectionObserver(
+      (es) =>
+        es.forEach((e) => {
+          if (e.isIntersecting) setActive(e.target.id)
+        }),
+      { rootMargin: '-40% 0px -50% 0px' }
+    )
+    NAV.forEach(([id]) => {
+      const el = document.getElementById(id)
+      if (el) o.observe(el)
+    })
     return () => o.disconnect()
   }, [])
+
   return (
     <>
-      <AnimatePresence>
-        {!ready && (
-          <motion.div key="pre" exit={{ y: '-100%' }} transition={{ duration: 0.9, ease }} className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white">
-            <motion.img src="/logo.png" alt="" initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 1 }} className="w-56 mix-blend-multiply" />
-            <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.3 }} className="mt-6 h-px w-40 origin-left bg-gold" />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <motion.div style={{ scaleX: sx }} className="fixed inset-x-0 top-0 z-[60] h-[3px] origin-left bg-gold" />
+      {/* Top Gold Scroll Progress Bar */}
+      <motion.div
+        style={{ scaleX: sx }}
+        className="fixed inset-x-0 top-0 z-[60] h-[3px] origin-left bg-gold"
+      />
+
       <Nav active={active} />
-      <main><Hero /><Marquee /><About /><MenuSection /><Gallery /><Contact /></main>
+
+      <main>
+        <Hero />
+        <Marquee />
+        <About />
+        <MenuSection />
+        <Gallery />
+        <Contact />
+      </main>
+
       <Footer />
-      <a href={WA} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-maroon text-white shadow-2xl">
-        <span className="absolute inset-0 animate-ping rounded-full bg-maroon/40" /><MessageCircle className="relative" />
+
+      {/* Persistent Floating WhatsApp CTA */}
+      <a
+        href={WA}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Chat on WhatsApp"
+        className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-maroon text-white shadow-2xl transition hover:scale-105 active:scale-95"
+      >
+        <span className="absolute inset-0 animate-ping rounded-full bg-maroon/30" />
+        <MessageCircle className="relative h-6 w-6 text-white" />
       </a>
     </>
   )
 }
+
