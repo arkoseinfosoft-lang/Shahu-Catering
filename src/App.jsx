@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useScroll, useSpring, useInView, animate } from 'framer-motion'
 import Lenis from 'lenis'
+import 'lenis/dist/lenis.css'
 import {
   Menu as MenuIcon,
   X,
@@ -992,17 +993,18 @@ export default function App() {
   const sx = useSpring(scrollYProgress, { stiffness: 120, damping: 30 })
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const l = new Lenis({ duration: 1.25 })
+    const l = new Lenis({
+      autoRaf: true,
+      lerp: 0.08,
+      smoothWheel: true,
+      syncTouch: false,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.2,
+      respectReducedMotion: false,
+    })
     window.__lenis = l
-    let id
-    const raf = (t) => {
-      l.raf(t)
-      id = requestAnimationFrame(raf)
-    }
-    id = requestAnimationFrame(raf)
+
     return () => {
-      cancelAnimationFrame(id)
       l.destroy()
       window.__lenis = null
     }
