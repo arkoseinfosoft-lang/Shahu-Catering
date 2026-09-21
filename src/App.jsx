@@ -12,9 +12,7 @@ import {
   ChefHat,
   Sparkles,
   ArrowRight,
-  CheckCircle2,
-  Loader2,
-  Send
+  CheckCircle2
 } from 'lucide-react'
 import { packages } from './data'
 
@@ -23,7 +21,6 @@ const wa = (text) => `https://wa.me/919975110727?text=${encodeURIComponent(text)
 const WA_DEFAULT = wa(
   "Hello Shahu Catering! I found your website and I'd like to know more about your catering packages. Could you please share the menu and pricing?"
 )
-const FORMSUBMIT_EMAIL = import.meta.env.VITE_FORMSUBMIT_EMAIL || 'shahucatering@gmail.com'
 
 const NAV = [
   ['home', 'Home'],
@@ -751,55 +748,29 @@ const inp =
   'w-full rounded-xl border border-gold/30 bg-white px-4 py-3.5 text-base text-neutral-800 outline-none transition focus:border-gold focus:ring-1 focus:ring-gold/30'
 
 function Contact() {
-  const [status, setStatus] = useState('idle') // 'idle' | 'submitting' | 'success' | 'error'
+  const [status, setStatus] = useState('idle') // 'idle' | 'success'
   const [lastData, setLastData] = useState(null)
-  const [errorMsg, setErrorMsg] = useState('')
+  const [waUrl, setWaUrl] = useState('')
 
-  const send = async (e) => {
+  const send = (e) => {
     e.preventDefault()
-    setStatus('submitting')
-    setErrorMsg('')
     const f = Object.fromEntries(new FormData(e.target))
     setLastData(f)
 
-    try {
-      const res = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_EMAIL}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          Name: f.name,
-          Phone: f.phone,
-          Email: f.email,
-          'Event Date': f.date || 'Not specified',
-          'Estimated Guests': f.guests || 'Not specified',
-          'Selected Package': f.pkg,
-          'Additional Notes': f.note || 'None',
-          _subject: `New Banquet Inquiry from ${f.name} (${f.pkg}) - Shahu Catering`,
-          _template: 'table',
-          _captcha: 'false',
-        }),
-      })
+    const msg = `Hello Shahu Catering! I would like to request a quotation for an upcoming event:
 
-      const data = await res.json()
-      if (res.ok && (data.success === 'true' || data.success === true || data.message)) {
-        setStatus('success')
-      } else {
-        throw new Error(data.message || 'Submission failed')
-      }
-    } catch (err) {
-      console.error('FormSubmit error:', err)
-      setStatus('error')
-      setErrorMsg('Unable to dispatch email directly. Please connect with us directly via WhatsApp.')
-    }
-  }
+• Name: ${f.name}
+• Phone: ${f.phone}
+• Email: ${f.email || 'Not provided'}
+• Event Date: ${f.date || 'To be decided'}
+• Estimated Guests: ${f.guests || 'Not specified'}
+• Package: ${f.pkg}
+• Notes & Preferences: ${f.note || 'None'}`
 
-  const openWhatsAppWithData = () => {
-    if (!lastData) return
-    const msg = `Hello Shahu Catering! I'd like a quote.\nName: ${lastData.name}\nPhone: ${lastData.phone}\nEmail: ${lastData.email || '-'}\nEvent date: ${lastData.date || '-'}\nGuests: ${lastData.guests || '-'}\nPackage: ${lastData.pkg}\n${lastData.note || ''}`
-    window.open(wa(msg), '_blank', 'noreferrer')
+    const url = wa(msg)
+    setWaUrl(url)
+    setStatus('success')
+    window.open(url, '_blank', 'noreferrer')
   }
 
   return (
@@ -867,22 +838,25 @@ function Contact() {
                   <CheckCircle2 className="h-8 w-8 sm:h-9 sm:w-9 text-gold" />
                 </div>
                 <h3 className="font-display text-2xl sm:text-4xl font-semibold text-maroon">
-                  Inquiry Dispatched Successfully
+                  Inquiry Dispatched to WhatsApp
                 </h3>
                 <p className="mt-2.5 sm:mt-3 text-neutral-600 leading-relaxed text-sm sm:text-base max-w-lg mx-auto">
-                  Thank you, <span className="font-semibold text-maroon">{lastData?.name}</span>. Your event details have been delivered to our inbox. Our team will review your menu requirements and reach out to you promptly at <span className="font-semibold text-maroon">{lastData?.phone}</span>.
+                  Thank you, <span className="font-semibold text-maroon">{lastData?.name}</span>. WhatsApp has been opened with your event details pre-filled. Simply send the message to connect directly with Mr. Dipesh Shahu.
                 </p>
                 <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-                  <button
-                    onClick={openWhatsAppWithData}
+                  <a
+                    href={waUrl}
+                    target="_blank"
+                    rel="noreferrer"
                     className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-maroon px-7 py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-wine w-full sm:w-auto active:scale-95"
                   >
                     <MessageCircle className="h-4 w-4 text-gold" />
-                    <span>Also Connect on WhatsApp</span>
-                  </button>
+                    <span>Open in WhatsApp</span>
+                  </a>
                   <button
+                    type="button"
                     onClick={() => setStatus('idle')}
-                    className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-gold/50 px-7 py-3.5 text-sm font-medium text-maroon transition hover:bg-cream w-full sm:w-auto active:scale-95"
+                    className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-gold/50 px-7 py-3.5 text-sm font-medium text-maroon transition hover:bg-cream w-full sm:w-auto active:scale-95 cursor-pointer"
                   >
                     Submit Another Inquiry
                   </button>
@@ -898,22 +872,9 @@ function Contact() {
                     Request a Quotation
                   </h3>
                   <p className="mt-1 text-xs text-neutral-500">
-                    Fill in your details below and your banquet proposal will be delivered straight to our team.
+                    Fill in your details below to generate your banquet proposal and connect directly on WhatsApp with our team.
                   </p>
                 </div>
-
-                {status === 'error' && (
-                  <div className="mb-5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs text-rose-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
-                    <p>{errorMsg}</p>
-                    <button
-                      type="button"
-                      onClick={openWhatsAppWithData}
-                      className="shrink-0 rounded-full bg-maroon px-4 py-1.5 text-xs text-white hover:bg-wine"
-                    >
-                      Chat on WhatsApp
-                    </button>
-                  </div>
-                )}
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
@@ -930,9 +891,9 @@ function Contact() {
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs uppercase tracking-wider text-neutral-600 font-medium mb-1.5">
-                      Email Address *
+                      Email Address <span className="text-neutral-400 normal-case">(optional)</span>
                     </label>
-                    <input required name="email" type="email" placeholder="e.g. ramesh@example.com" className={inp} />
+                    <input name="email" type="email" placeholder="e.g. ramesh@example.com" className={inp} />
                   </div>
                   <div>
                     <label className="block text-xs uppercase tracking-wider text-neutral-600 font-medium mb-1.5">
@@ -952,7 +913,7 @@ function Contact() {
                     </label>
                     <select name="pkg" aria-label="Package" className={inp}>
                       {packages.map((x) => (
-                        <option key={x.id}>
+                        <option key={x.id} value={`${x.name} (₹${x.price}/plate)`}>
                           {x.name} · ₹{x.price} per plate ({x.tag})
                         </option>
                       ))}
@@ -965,28 +926,21 @@ function Contact() {
                     <textarea
                       name="note"
                       rows="3"
-                      placeholder="Specific live counters, date details, or menu preferences..."
+                      placeholder="Specific live counters, event venue, or menu preferences..."
                       className={inp}
                     />
                   </div>
                   <div className="sm:col-span-2 mt-2">
                     <button
                       type="submit"
-                      disabled={status === 'submitting'}
-                      className="w-full min-h-[48px] rounded-full bg-maroon py-3.5 sm:py-4 text-sm font-semibold text-white shadow-lg shadow-maroon/20 transition hover:bg-wine flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-wait active:scale-95"
+                      className="w-full min-h-[48px] rounded-full bg-maroon py-3.5 sm:py-4 text-sm font-semibold text-white shadow-lg shadow-maroon/20 transition hover:bg-wine flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
                     >
-                      {status === 'submitting' ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin text-gold" />
-                          <span>Dispatching Inquiry...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Submit Catering Inquiry</span>
-                          <Send className="h-4 w-4 text-gold" />
-                        </>
-                      )}
+                      <MessageCircle className="h-4 w-4 text-gold" />
+                      <span>Submit Catering Inquiry via WhatsApp</span>
                     </button>
+                    <p className="mt-2 text-center text-[11px] text-neutral-500">
+                      Directly opens WhatsApp with your pre-filled inquiry details for an instant response.
+                    </p>
                   </div>
                 </div>
               </form>
